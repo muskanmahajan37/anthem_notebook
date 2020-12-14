@@ -1,0 +1,13 @@
+Type: Jupyter Notebook Extension
+Compatibility: 5.x, 6.x
+Name: Anthem_Notebook
+Main: main.js
+# Icon: template.png
+Link: README.md
+Description: |
+  Sets up the Jupyter Notebook with an anthem and vampire setup
+tags:
+  - verification
+  - create template
+# Add Parameters:
+
