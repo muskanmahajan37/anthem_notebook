@@ -62,7 +62,16 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
             return [index, cid];
         };
 
-    
+        //Function to create and execute a markdown cell if the option is given
+        const create_and_execute_md = function(index,cell_id,set_text,exe_val) {
+            Jupyter.notebook.insert_cell_at_index('markdown', index);
+            let present_cell = Jupyter.notebook.get_cell(index);
+            present_cell.cell_id = cell_id;
+            present_cell.set_text(set_text);
+            if(exe_val){
+                present_cell.execute();
+            }            
+        };
         /**************************************************************************/
         /**************************************************************************/
         
@@ -183,27 +192,15 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
         /**************************************************************************/
 
         const add_3_input_cells = function () {
-            // if(value === 'hello')
-            // {
-            //     console.log('Yes this is printing, lololo');
-            // }
-            const cell_val = index_from_cellid('input_md_');
+             const cell_val = index_from_cellid('input_md_');
             const input_n = parseInt(cell_val[1].slice(9)) + 1;
             let index = cell_val[0];
             if (input_n > 1) {
                 index += 2;
             }
-            //insert set text and index for 1st cell
-            Jupyter.notebook.insert_cell_at_index('markdown', (index + 1));
-            let present_cell = Jupyter.notebook.get_cell(index + 1);
-            present_cell.cell_id = "input_md_" + input_n;
-            present_cell.set_text("#### Input " + input_n);
-            present_cell.execute();
 
-            //insert set text and index for 2nd  cell
-            Jupyter.notebook.insert_cell_at_index('markdown', (index + 2));
-            present_cell = Jupyter.notebook.get_cell(index + 2);
-            present_cell.set_text("Add Description of Input " + input_n);
+            create_and_execute_md((index + 1),("input_md_" + input_n),("#### Input " + input_n),true);
+            create_and_execute_md((index + 2),("input_desc_" + input_n),("Add Description of Input " + input_n),false);
 
             //insert set text and index for 2nd  cell
             Jupyter.notebook.insert_cell_at_index('code', (index + 3));
@@ -221,7 +218,7 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
               help: 'Add 3 md cells',
               help_index: 'zz',
               id: 'add_3_md_cells',
-              handler: add_3_input_cells('hello')
+              handler: add_3_input_cells
           };
         
         /**************************************************************************/
@@ -234,17 +231,8 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
             if (assume_n > 1) {
                 index += 2;
             }
-            //insert set text and index for 1st cell
-            Jupyter.notebook.insert_cell_at_index('markdown', (index + 1));
-            let present_cell = Jupyter.notebook.get_cell(index + 1);
-            present_cell.cell_id = "assume_md_" + assume_n;
-            present_cell.set_text("#### Assume " + assume_n);
-            present_cell.execute();
-
-            //insert set text and index for 2nd  cell
-            Jupyter.notebook.insert_cell_at_index('markdown', (index + 2));
-            present_cell = Jupyter.notebook.get_cell(index + 2);
-            present_cell.set_text("Add Description of Assume " + assume_n);
+            create_and_execute_md((index + 1),("assume_md_" + input_n),("#### Assume " + assume_n),true);
+            create_and_execute_md((index + 2),("assume_desc_" + input_n),("Add Description of Assumption " + assume_n),false);
 
             //insert set text and index for 2nd  cell
             Jupyter.notebook.insert_cell_at_index('code', (index + 3));
@@ -337,6 +325,11 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
             //start index at end
             let index = Jupyter.notebook.ncells() -1;
             //insert set text and index for achievement cell
+       
+
+            // create_and_execute_md((index + 1),("assume_md_" + input_n),("#### Assume " + assume_n),true);
+            // create_and_execute_md((index + 2),("assume_desc_" + input_n),("Add Description of Assumption " + assume_n),false);
+            
             Jupyter.notebook.insert_cell_at_index('markdown', index);
             let present_cell = Jupyter.notebook.get_cell(index); 
             const cell_val = index_from_cellid("achieve_md_");
