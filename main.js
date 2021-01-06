@@ -37,6 +37,13 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
         };
 
         /**************************************************************************/
+        const create_and_execute_codecl = function(index,cell_id) {
+            Jupyter.notebook.insert_cell_at_index('code', index);
+            let present_cell = Jupyter.notebook.get_cell(index);
+            present_cell.cell_id = cell_id + present_cell.cell_id;
+            present_cell.execute = execute_initial;                     
+        };
+        /*************************************************************************/
 
         //  Function to rompts user to enter name for notebook if 'Untitled' in name
         const prompt_name = function () {
@@ -192,7 +199,7 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
         /**************************************************************************/
 
         const add_3_input_cells = function () {
-             const cell_val = index_from_cellid('input_md_');
+            const cell_val = index_from_cellid('input_md_');
             const input_n = parseInt(cell_val[1].slice(9)) + 1;
             let index = cell_val[0];
             if (input_n > 1) {
@@ -201,12 +208,7 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
 
             create_and_execute_md((index + 1),("input_md_" + input_n),("#### Input " + input_n),true);
             create_and_execute_md((index + 2),("input_desc_" + input_n),("Add Description of Input " + input_n),false);
-
-            //insert set text and index for 2nd  cell
-            Jupyter.notebook.insert_cell_at_index('code', (index + 3));
-            present_cell = Jupyter.notebook.get_cell(index + 3);
-            present_cell.cell_id = "input_code_" + present_cell.cell_id;
-            present_cell.execute = execute_initial;
+            create_and_execute_codecl((index + 3),"input_code_");
         };
          /**************************************************************************/
 
@@ -231,14 +233,10 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
             if (assume_n > 1) {
                 index += 2;
             }
-            create_and_execute_md((index + 1),("assume_md_" + input_n),("#### Assume " + assume_n),true);
-            create_and_execute_md((index + 2),("assume_desc_" + input_n),("Add Description of Assumption " + assume_n),false);
-
-            //insert set text and index for 2nd  cell
-            Jupyter.notebook.insert_cell_at_index('code', (index + 3));
-            present_cell = Jupyter.notebook.get_cell(index + 3);
-            present_cell.cell_id = "assume_code_" + present_cell.cell_id;
-            present_cell.execute = execute_initial;
+            console.log("hey there"+assume_n);
+            create_and_execute_md((index + 1),("assume_md_" + assume_n),("#### Assume " + assume_n),true);
+            create_and_execute_md((index + 2),("assume_desc_" + assume_n),("Add Description of Assumption " + assume_n),false);
+            create_and_execute_codecl((index + 3),"assume_code_");
         };
          /**************************************************************************/
 
@@ -323,80 +321,41 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
 
         const add_achievement_cells = function () {
             //start index at end
-            let index = Jupyter.notebook.ncells() -1;
+            let index = Jupyter.notebook.ncells() - 1;
             //insert set text and index for achievement cell
        
+            let cell_val = index_from_cellid("achieve_md_");
+            const achieve_n = parseInt(cell_val[1].slice(11)) + 1;  
 
-            // create_and_execute_md((index + 1),("assume_md_" + input_n),("#### Assume " + assume_n),true);
-            // create_and_execute_md((index + 2),("assume_desc_" + input_n),("Add Description of Assumption " + assume_n),false);
+            create_and_execute_md((index),("achieve_md_" + achieve_n),("### Achievement " + achieve_n),true);
+           
             
-            Jupyter.notebook.insert_cell_at_index('markdown', index);
-            let present_cell = Jupyter.notebook.get_cell(index); 
-            const cell_val = index_from_cellid("achieve_md_");
-            const achieve_n = parseInt(cell_val[1].slice(11)) + 1;        
-            present_cell.cell_id = "achieve_md_" + achieve_n;
-            present_cell.set_text("### Achievement " + achieve_n);
-            present_cell.execute();
-            index+=1;
-
             //insert set text and index for Achievement description
-            Jupyter.notebook.insert_cell_at_index('markdown', index);
-            present_cell = Jupyter.notebook.get_cell(index);         
-            present_cell.set_text("Add Description of Achievement " + achieve_n);
-            index+=1;
+            create_and_execute_md((index+1),("achieve_desc_" + achieve_n),("Add Description of Achievement " + achieve_n),false);
 
-            //insert set text and index for Achievement description
-            Jupyter.notebook.insert_cell_at_index('markdown', index);
-            present_cell = Jupyter.notebook.get_cell(index);         
-            present_cell.set_text("#### Output");
-            present_cell.execute();
-            index+=1;
+            //insert set text and index for Output heading
+            cell_val = index_from_cellid("output_md_");
+            let output_n = cell_val[0]<0 ? 1 : (parseInt(cell_val[1].slice(10)) + 1);
+            create_and_execute_md((index+2),("output_md_" + output_n),("#### Output " + output_n),true);
 
             //insert set text and index for Output description
-            Jupyter.notebook.insert_cell_at_index('markdown', index);
-            present_cell = Jupyter.notebook.get_cell(index);         
-            present_cell.set_text("Add Description of Output " + achieve_n);
-            index+=1;
-
+            create_and_execute_md((index+3),("output_desc_" + output_n),("Add Description of Output " + output_n),false);
 
             //insert output code
-            Jupyter.notebook.insert_cell_at_index('code', index);
-            present_cell = Jupyter.notebook.get_cell(index);
-            present_cell.cell_id = "output_code_" + achieve_n + present_cell.cell_id;
-            present_cell.execute = execute_initial;
-            index+=1;
+            create_and_execute_codecl((index + 4),"output_code_");
             //Add spec heading
-             Jupyter.notebook.insert_cell_at_index('markdown', index);
-             present_cell = Jupyter.notebook.get_cell(index); 
-             present_cell.set_text("#### Specification ");
-             present_cell.execute();
-             index+=1;
+            create_and_execute_md((index+5),("spec_md_" + achieve_n),("#### Specification " + achieve_n),true);
             //insert md spec
-            Jupyter.notebook.insert_cell_at_index('markdown', index);
-            present_cell = Jupyter.notebook.get_cell(index);       
-            present_cell.set_text("Add Description of Specification");
-            index+=1;
+            create_and_execute_md((index+6),("spec_desc_" + achieve_n),("Add Description of Specification " + achieve_n),false);
 
             //insert spec code
-            Jupyter.notebook.insert_cell_at_index('code', index);
-            present_cell = Jupyter.notebook.get_cell(index);
-            present_cell.cell_id = "specif_code_" + achieve_n + present_cell.cell_id;
-            present_cell.execute = execute_initial;
-            index+=1;
+            create_and_execute_codecl((index + 7),"specif_code_");
 
             //Add lp heading
-             Jupyter.notebook.insert_cell_at_index('markdown', index);
-             present_cell = Jupyter.notebook.get_cell(index); 
-             present_cell.set_text("#### ASP code");
-             present_cell.execute();
-             index+=1;
+            create_and_execute_md((index+8),("code_md_" + achieve_n),("#### ASP code " + achieve_n),true);
 
             //insert lp
-            Jupyter.notebook.insert_cell_at_index('code', index);
-            present_cell = Jupyter.notebook.get_cell(index);
-            present_cell.cell_id = "asp_code_" +achieve_n+"_1"+present_cell.cell_id;
-            present_cell.execute = execute_initial;
-           
+            create_and_execute_codecl((index + 9),"asp_code_");           
         };
         /**************************************************************************/
 
