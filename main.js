@@ -43,35 +43,11 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
 
         /**************************************************************************/
 
-        // Function to add sections by copying cells from the template.ipynb
+        // Function to cell initially
         const add_sections = function () {
-            //location of the template
-            const template_path = Jupyter.notebook.base_url + 'nbextensions/anthem_notebook/template.ipynb';
-            $.getJSON(template_path, json => {
-                let cells = json['cells'];
-                cells.forEach((item, index) => {
-                    //insert cell at index
-                    Jupyter.notebook.insert_cell_at_index(item['cell_type'], index).set_text(item['source'].join(''));
-                    //select the cells by index
-                    let present_cell = Jupyter.notebook.get_cell(index);
-
-                    //add metadata and execute the md cells from the template 
-                    if (present_cell.cell_type === 'markdown') {
-                        //update cellid for specific cells
-                        if (present_cell.get_text() === "### Input") {
-                            present_cell.cell_id = "input_md_{0}";
-                        }
-                        if (present_cell.get_text() === "### Assume") {
-                            present_cell.cell_id = "assume_md_0";
-                        }
-                        if (present_cell.get_text() === "## Achievements") {
-                            present_cell.cell_id = "achieve_md_0";
-                        }
-                        present_cell.metadata = item.metadata;
-                        present_cell.execute();
-                    }
-                });
-            });
+            create_and_execute_cell('markdown',0, 'input_md_{0}', '### Inputs ' , true);
+            create_and_execute_cell('markdown',1, 'assume_md_{0}', '### Assumptions', true);
+            create_and_execute_cell('markdown',2, 'achieve_md_{0}', '## Achievements', true);
         };
 
         /**************************************************************************/
@@ -230,7 +206,7 @@ define(['jquery', 'base/js/namespace', 'base/js/events'],
         const add_3_assume_cells = function () {
             const cell_val = index_from_cellid('assume_md_');
             const assume_n = parseInt(cell_val[1].substring(11,cell_val[1].indexOf('}'))) + 1;
-            let index = input_n>1?cell_val[0]+2:cell_val[0];
+            let index = assume_n>1?cell_val[0]+2:cell_val[0];
             create_and_execute_cell('markdown',index + 1, 'assume_md_{' + assume_n +'}', '#### Assume ' + assume_n, true);
             create_and_execute_cell('markdown',index + 2, 'assume_desc_{' + assume_n +'}', 'Add Description of Assumption' + assume_n, false);
             create_and_execute_cell('code', index + 3, 'assume_code_{'+ assume_n + '}','',false);
